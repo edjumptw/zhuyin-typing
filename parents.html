@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>注音打字練習計畫｜給國小二年級的孩子</title>
+<style>
+:root{
+  --bg:#FFFBF3; --card:#FFFFFF; --ink:#33302C; --ink2:#8A8178;
+  --orange:#E8833A; --orange-l:#FFF1E4;
+  --green:#4A8C6A; --green-l:#E8F4EC;
+  --blue:#3D7EA6; --blue-l:#E6F1F7;
+  --purple:#7B5EA7; --purple-l:#F0EAF8;
+  --red:#C65B5B; --red-l:#FBE9E9;
+  --line:#EAE2D6;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; padding:0 0 60px; background:var(--bg); color:var(--ink);
+  font-family:"PingFang TC","Hiragino Sans GB","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85;
+}
+.wrap{max-width:840px; margin:0 auto; padding:0 18px;}
+
+header{padding:34px 0 20px; border-bottom:2px solid var(--line); margin-bottom:26px;}
+h1{font-size:26px; margin:0 0 6px; font-weight:600; letter-spacing:.5px;}
+.lead{color:var(--ink2); font-size:14.5px; margin:0;}
+
+nav{
+  background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:12px 16px; margin-bottom:30px; font-size:15px;
+}
+nav a{color:var(--blue); text-decoration:none; margin-right:14px; white-space:nowrap; line-height:2.2;}
+nav a:hover{text-decoration:underline;}
+
+h2{
+  font-size:20px; margin:42px 0 14px; padding-left:12px;
+  border-left:5px solid var(--orange); font-weight:600;
+}
+h3{font-size:17px; margin:26px 0 8px; font-weight:600; color:var(--ink);}
+p{margin:0 0 12px;}
+
+.box{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:18px 20px; margin:14px 0;
+}
+.box.g{background:var(--green-l); border-color:#CBE3D4;}
+.box.b{background:var(--blue-l); border-color:#CFE2EE;}
+.box.o{background:var(--orange-l); border-color:#F6DCC3;}
+.box.p{background:var(--purple-l); border-color:#E0D5F0;}
+.box.r{background:var(--red-l); border-color:#F2D3D3;}
+
+ul,ol{margin:0 0 12px; padding-left:22px;}
+li{margin-bottom:7px;}
+.tag{
+  display:inline-block; font-size:12.5px; padding:2px 9px; border-radius:20px;
+  background:var(--orange); color:#fff; margin-right:6px; vertical-align:2px;
+}
+.tag.g{background:var(--green);} .tag.b{background:var(--blue);}
+.tag.p{background:var(--purple);} .tag.r{background:var(--red);}
+.tag.gray{background:#9E958A;}
+
+.zh{font-family:"PingFang TC","Microsoft JhengHei",serif; letter-spacing:1px;}
+
+/* 鍵盤圖 */
+.kb{background:#FDFCFA; border:1px solid var(--line); border-radius:12px; padding:14px 12px; margin:14px 0;}
+.kbrow{display:flex; gap:5px; justify-content:center; margin-bottom:5px; flex-wrap:nowrap;}
+.key{
+  flex:1 1 0; min-width:0; aspect-ratio:1/1.05; border-radius:8px; background:#fff;
+  border:1.5px solid #D8CEBE; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:2px;
+}
+.key .z{font-size:clamp(13px,3.2vw,19px); font-weight:600; line-height:1.1;}
+.key .e{font-size:clamp(8px,1.8vw,11px); color:#A79C8E; line-height:1.2;}
+.key.tone{background:#FFF6E9; border-color:#E8B77A;}
+.key.tone .z{color:#C47A22;}
+.key.sp{background:#EEF3F7; border-color:#C6D8E4;}
+.key.sp .z{font-size:clamp(9px,2vw,12px); color:#5A7A8C;}
+.kbnote{font-size:13px; color:var(--ink2); text-align:center; margin-top:8px;}
+
+/* 練習句卡 */
+.sent{
+  background:var(--card); border:1px solid var(--line); border-left:4px solid var(--orange);
+  border-radius:10px; padding:12px 16px; margin:10px 0;
+}
+.sent .han{font-size:19px; font-weight:500; line-height:1.7; letter-spacing:1px;}
+.sent .zhu{font-size:15px; color:var(--green); letter-spacing:1.5px; line-height:1.8; word-break:break-all;}
+.sent.used{border-left-color:var(--purple);}
+
+.lvlhead{display:flex; align-items:center; gap:10px; margin:20px 0 8px; flex-wrap:wrap;}
+.lvlhead .n{background:var(--orange); color:#fff; width:28px; height:28px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:15px; flex:none;}
+.lvlhead .t{font-size:17px; font-weight:600;}
+
+button{
+  font-family:inherit; font-size:15.5px; border:none; border-radius:10px;
+  padding:11px 20px; background:var(--orange); color:#fff; cursor:pointer; min-height:44px;
+}
+button:active{transform:translateY(1px);}
+button.gray{background:#EDE7DC; color:var(--ink);}
+
+#draw{
+  background:#FFFCF6; border:2px dashed var(--orange); border-radius:14px;
+  padding:20px; text-align:center; margin:16px 0;
+}
+#drawOut{font-size:22px; font-weight:600; letter-spacing:1px; min-height:38px; margin:10px 0; color:var(--ink);}
+#drawZhu{font-size:16px; color:var(--green); letter-spacing:1.5px; min-height:30px;}
+
+.pop{animation:popin .3s ease;}
+@keyframes popin{from{opacity:.2; transform:translateY(4px);} to{opacity:1; transform:none;}}
+.hr{height:1px; background:var(--line); margin:34px 0; border:0;}
+.foot{font-size:13px; color:var(--ink2); margin-top:40px; padding-top:16px; border-top:1px solid var(--line);}
+.small{font-size:13.5px; color:var(--ink2);}
+.bold{font-weight:600;}
+
+@media print{
+  body{background:#fff; font-size:12pt;}
+  nav,#draw button,.noPrint{display:none;}
+  .box,.sent,.kb{break-inside:avoid;}
+  h2{break-after:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>注音打字練習計畫</h1>
+  <p class="lead">給國小二年級（八、九歲）的孩子——從「會拼音」到「真的能傳 LINE 給阿嬤」<br>家長手冊・可直接列印</p>
+</header>
+
+<nav>
+  <a href="#s0">0 先確認：孩子已學到哪</a>
+  <a href="#s1">1 符號清單與練習順序</a>
+  <a href="#s2">2 三個練習遊戲</a>
+  <a href="#s3">3 練習句型與短文</a>
+  <a href="#s4">4 家長操作建議</a>
+  <a href="#s5">5 常見困難與應對</a>
+</nav>
+
+<!-- ============ 0 ============ -->
+<h2 id="s0">0・先確認：二年級的孩子，注音已經學到哪裡？</h2>
+
+<p>先講結論：<span class="bold">二年級的孩子，理論上 37 個注音符號＋四個聲調全部都學過了。</span>所以現在不是「還要學新符號」，而是「要把腦袋裡的注音，接到手指頭上」。</p>
+
+<div class="box b">
+<p class="bold">依據十二年國教課綱（國語文領域）：</p>
+<ul>
+  <li>注音符號在<span class="bold">國小一年級上學期前 10 週</span>集中教學，採綜合教學法。也就是說，孩子一年級上學期期中考前後，37 個符號就教完了。</li>
+  <li>課綱要求「在第一學習階段結束前（也就是二年級結束前）達到<span class="bold">熟練應用</span>」。熟練，不是十週教完就有的，是靠持續用。</li>
+  <li>第一學習階段的學習內容包含：聲符、韻符、介符（Aa-I-1）／聲調（Aa-I-2）／二拼音與三拼音（Aa-I-3）／結合韻（Aa-I-4）。這些二年級都已經學過。</li>
+  <li>學習表現裡有一條跟我們的目標完全對上：<span class="bold">3-I-3「運用注音符號表達想法，記錄訊息」</span>。用注音打字傳訊息，正是課綱要的能力。</li>
+  <li>識字量：課綱第一學習階段是認讀約 1,000 個常用字、會用約 700 字。所以孩子「會寫的字」大概七百個左右——這數字很重要，後面講選字困難時會用到。</li>
+</ul>
+</div>
+
+<div class="box o">
+<p class="bold">所以要抓的三個重點：</p>
+<ol>
+  <li><span class="bold">符號不必重教</span>，若孩子某些音還會拼錯（最常见是 ㄣ／ㄥ、ㄓ／ㄗ），那是熟練度問題，用遊戲補就好。</li>
+  <li><span class="bold">真正的關卡是「鍵位」</span>——他聽得到、唸得出，但不知道那個音在鍵盤哪裡。</li>
+  <li><span class="bold">第二個關卡是「選字」</span>——打得出音，但不知道要選哪個國字。這不是笨，是認字量還不夠，需要技巧繞過去（見第 5 節）。</li>
+</ol>
+</div>
+
+<p class="small">註：各家版本（康軒、南一、翰林）課本上注音標示的多寡不同，二年級有些版本課文仍有注音、有些只剩生字注音。<span class="bold">請直接翻孩子的國語課本確認</span>，課本上怎麼標，練習就照那個標法。</p>
+
+<!-- ============ 1 ============ -->
+<h2 id="s1">1・要練的符號清單、難度分級與練習順序</h2>
+
+<h3>先知道：鍵盤長什麼樣子</h3>
+<p>台灣的注音鍵盤（大千式，也是 Windows、macOS、iOS、Android 內建的標準排列）有個很美的規律：<span class="bold">就是把注音符號表，由上往下、由左往右，一排一排貼到鍵盤上</span>。知道這件事，孩子找鍵的速度會快很多。</p>
+
+<div class="kb">
+  <div class="kbrow">
+    <div class="key"><span class="z zh">ㄅ</span><span class="e">1</span></div>
+    <div class="key"><span class="z zh">ㄉ</span><span class="e">2</span></div>
+    <div class="key tone"><span class="z zh">ˇ</span><span class="e">3</span></div>
+    <div class="key tone"><span class="z zh">ˋ</span><span class="e">4</span></div>
+    <div class="key"><span class="z zh">ㄓ</span><span class="e">5</span></div>
+    <div class="key tone"><span class="z zh">ˊ</span><span class="e">6</span></div>
+    <div class="key tone"><span class="z zh">˙</span><span class="e">7</span></div>
+    <div class="key"><span class="z zh">ㄚ</span><span class="e">8</span></div>
+    <div class="key"><span class="z zh">ㄞ</span><span class="e">9</span></div>
+    <div class="key"><span class="z zh">ㄢ</span><span class="e">0</span></div>
+    <div class="key"><span class="z zh">ㄦ</span><span class="e">-</span></div>
+  </div>
+  <div class="kbrow">
+    <div class="key"><span class="z zh">ㄆ</span><span class="e">Q</span></div>
+    <div class="key"><span class="z zh">ㄊ</span><span class="e">W</span></div>
+    <div class="key"><span class="z zh">ㄍ</span><span class="e">E</span></div>
+    <div class="key"><span class="z zh">ㄐ</span><span class="e">R</span></div>
+    <div class="key"><span class="z zh">ㄔ</span><span class="e">T</span></div>
+    <div class="key"><span class="z zh">ㄗ</span><span class="e">Y</span></div>
+    <div class="key"><span class="z zh">ㄧ</span><span class="e">U</span></div>
+    <div class="key"><span class="z zh">ㄛ</span><span class="e">I</span></div>
+    <div class="key"><span class="z zh">ㄟ</span><span class="e">O</span></div>
+    <div class="key"><span class="z zh">ㄣ</span><span class="e">P</span></div>
+  </div>
+  <div class="kbrow">
+    <div class="key"><span class="z zh">ㄇ</span><span class="e">A</span></div>
+    <div class="key"><span class="z zh">ㄋ</span><span class="e">S</span></div>
+    <div class="key"><span class="z zh">ㄎ</span><span class="e">D</span></div>
+    <div class="key"><span class="z zh">ㄑ</span><span class="e">F</span></div>
+    <div class="key"><span class="z zh">ㄕ</span><span class="e">G</span></div>
+    <div class="key"><span class="z zh">ㄘ</span><span class="e">H</span></div>
+    <div class="key"><span class="z zh">ㄨ</span><span class="e">J</span></div>
+    <div class="key"><span class="z zh">ㄜ</span><span class="e">K</span></div>
+    <div class="key"><span class="z zh">ㄠ</span><span class="e">L</span></div>
+    <div class="key"><span class="z zh">ㄤ</span><span class="e">;</span></div>
+  </div>
+  <div class="kbrow">
+    <div class="key"><span class="z zh">ㄈ</span><span class="e">Z</span></div>
+    <div class="key"><span class="z zh">ㄌ</span><span class="e">X</span></div>
+    <div class="key"><span class="z zh">ㄏ</span><span class="e">C</span></div>
+    <div class="key"><span class="z zh">ㄒ</span><span class="e">V</span></div>
+    <div class="key"><span class="z zh">ㄖ</span><span class="e">B</span></div>
+    <div class="key"><span class="z zh">ㄙ</span><span class="e">N</span></div>
+    <div class="key"><span class="z zh">ㄩ</span><span class="e">M</span></div>
+    <div class="key"><span class="z zh">ㄝ</span><span class="e">,</span></div>
+    <div class="key"><span class="z zh">ㄡ</span><span class="e">.</span></div>
+    <div class="key"><span class="z zh">ㄥ</span><span class="e">/</span></div>
+  </div>
+  <p class="kbnote">橘色是聲調鍵。一聲按<span class="bold">空白鍵</span>；二聲 ˊ 按 6；三聲 ˇ 按 3；四聲 ˋ 按 4；輕聲 ˙ 按 7。</p>
+</div>
+
+<p class="small">小提醒：市面上買得到的鍵盤，鍵帽上通常都印了這些注音。如果家裡鍵盤沒印，上網搜「大千式注音鍵盤」印一張貼在旁邊，或買一組注音鍵盤貼紙（約一、兩百元），效果好很多。</p>
+
+<h3>符號清單與難度分級</h3>
+<p>37 個符號分成三類。下面的分級是<span class="bold">「打字難度」</span>，不是拼音難度——打字難度看的是：鍵在鍵盤的哪個位置（中間好按、邊緣難按）、這個音常不常出現、孩子容不容易聽錯。</p>
+
+<div class="box">
+<p><span class="tag g">A 級・最簡單</span><span class="bold">聲母</span>（鍵盤左半、食指中指範圍）</p>
+<p class="zh">ㄅ ㄆ ㄇ ㄈ ㄉ ㄊ ㄋ ㄌ ㄍ ㄎ ㄏ</p>
+<p><span class="tag g">A 級</span><span class="bold">單韻母</span>中最常用的幾個（右半、也好按）</p>
+<p class="zh">ㄚ ㄛ ㄜ ㄧ ㄨ ㄞ ㄟ ㄠ ㄡ</p>
+<p class="small">這一級幾乎涵蓋「爸爸、媽媽、哥哥、回家、好吃」這些孩子天天講的字，練完就能打出一整句。</p>
+</div>
+
+<div class="box">
+<p><span class="tag b">B 級・中等</span><span class="bold">翹舌與平舌音</span>（台灣孩子最容易聽錯的一組）</p>
+<p class="zh">ㄓ ㄔ ㄕ ㄖ ㄗ ㄘ ㄙ　搭配　ㄐ ㄑ ㄒ</p>
+<p><span class="tag b">B 級</span><span class="bold">鼻音韻母</span></p>
+<p class="zh">ㄢ ㄣ ㄤ ㄥ</p>
+<p class="small">南部腔常見的困擾：ㄣ／ㄥ 分不清（「心」和「星」）、ㄓ／ㄗ 分不清（「知」和「資」）。這不是打字的錯，是聽辨需要練。</p>
+</div>
+
+<div class="box">
+<p><span class="tag p">C 級・較難</span><span class="bold">結合韻</span>（介音 ㄧ ㄨ ㄩ 加上韻母，三拼音）</p>
+<p class="zh">ㄧ 系列：ㄧㄚ ㄧㄝ ㄧㄠ ㄧㄡ ㄧㄢ ㄧㄣ ㄧㄤ ㄧㄥ<br>
+ㄨ 系列：ㄨㄚ ㄨㄛ ㄨㄞ ㄨㄟ ㄨㄢ ㄨㄣ ㄨㄤ ㄨㄥ<br>
+ㄩ 系列：ㄩㄝ ㄩㄢ ㄩㄣ ㄩㄥ</p>
+<p class="small">共 22 個結合韻，二年級課綱已教過（Aa-I-4）。打字時就是「介音鍵＋韻母鍵」連按兩下，不用特別背。另有 ㄧㄞ、ㄧㄛ 兩個罕用，課本多半不教，遇到再說。</p>
+</div>
+
+<div class="box">
+<p><span class="tag r">D 級・最後練</span><span class="bold">聲調與輕聲</span></p>
+<p class="zh">一聲（空白鍵）・二聲 ˊ（6）・三聲 ˇ（3）・四聲 ˋ（4）・輕聲 ˙（7）</p>
+<p><span class="tag r">D 級</span><span class="bold">捲舌韻母 ㄦ</span>，以及兒化音（「一點兒」「花兒」）</p>
+<p class="small">聲調放在後面不是因為不重要，是因為它要<span class="bold">搭著字練才有意義</span>。單練聲調很無聊，孩子會抗拒。</p>
+</div>
+
+<h3>循序漸進的六關（建議每關 3 到 5 天，看孩子狀況調整）</h3>
+
+<div class="lvlhead"><span class="n">1</span><span class="t">認識鍵盤，先只打韻母</span></div>
+<ul>
+  <li>內容：ㄚ ㄛ ㄜ ㄧ ㄨ ㄞ ㄟ ㄠ ㄡ ㄢ ㄣ ㄤ ㄥ ㄦ，全部配<span class="bold">一聲</span>（按空白鍵）。</li>
+  <li>目標：熟悉鍵盤右半邊，建立「原來按一下就會出現東西」的成就感。</li>
+  <li>過關：家長唸「ㄚ」，孩子三秒內按出來。14 個韻母都能三秒內找到。</li>
+</ul>
+
+<div class="lvlhead"><span class="n">2</span><span class="t">加上最常用的聲母，打二字詞</span></div>
+<ul>
+  <li>內容：ㄅ ㄆ ㄇ ㄈ ㄉ ㄊ ㄋ ㄌ ㄍ ㄎ ㄏ。練習「聲母＋韻母」二拼。</li>
+  <li>目標：左手聲母、右手韻母，兩手輪流。這是注音打字好快的祕密。</li>
+  <li>過關：能打出 ㄇㄚ（媽）、ㄅㄚˋ（爸）、ㄍㄜ（哥）、ㄇㄟˋ（妹）、ㄐㄧㄚ（家）等家人的稱呼。</li>
+</ul>
+
+<div class="lvlhead"><span class="n">3</span><span class="t">四個聲調全上場</span></div>
+<ul>
+  <li>內容：同一個音配不同聲調。例如 ㄇㄚ 一聲＝媽、ㄇㄚˊ 二聲＝麻、ㄇㄚˇ 三聲＝馬、ㄇㄚˋ 四聲＝罵。</li>
+  <li>目標：空格、6、3、4 四個鍵能不看就按。</li>
+  <li>過關：家長唸一個音（含聲調），孩子能打出正確的字。</li>
+</ul>
+
+<div class="lvlhead"><span class="n">4</span><span class="t">翹舌、平舌、鼻音</span></div>
+<ul>
+  <li>內容：ㄓ ㄔ ㄕ ㄖ ㄗ ㄘ ㄙ ㄐ ㄑ ㄒ，以及 ㄢㄣㄤㄥ。</li>
+  <li>這一關最需要「聽」的練習。建議先玩聽辨遊戲（見第 2 節遊戲三），再上鍵盤。</li>
+  <li>過關：能打出「吃飯、老師、生日、回家」這些詞。</li>
+</ul>
+
+<div class="lvlhead"><span class="n">5</span><span class="t">結合韻，三拼音</span></div>
+<ul>
+  <li>內容：ㄧ ㄨ ㄩ 開頭的結合韻。打字時就是多按一個鍵，例如「ㄐㄧㄚ」＝按 R（ㄐ）＋ U（ㄧ）＋ 8（ㄚ）。</li>
+  <li>目標：知道「多一個介音就多按一下」，不用死背 22 個結合韻。</li>
+  <li>過關：能打出「回家、學校、下雨、睡覺」。</li>
+</ul>
+
+<div class="lvlhead"><span class="n">6</span><span class="t">真實訊息：打完整句子傳出去</span></div>
+<ul>
+  <li>內容：第 3 節的句型與短文。</li>
+  <li>目標：<span class="bold">真的傳出去給家人</span>。這一步是所有練習裡最重要的一步。</li>
+  <li>過關：孩子自己打一句話，傳給阿嬤，阿嬤回他。這就是滿分。</li>
+</ul>
+
+<div class="box g">
+<p class="bold">給家長的一句話：</p>
+<p>六關不必一關一關硬闖。孩子如果在第 2 關卡住，就讓他多在「打家人的稱呼」上玩幾天——反正他天天都在叫這些人，有感覺，學得最快。<span class="bold">進度是給家長看的，不是給孩子的壓力。</span></p>
+</div>
+
+<!-- ============ 2 ============ -->
+<h2 id="s2">2・三個練習遊戲</h2>
+<p>八、九歲的孩子，坐在那邊抄注音十分鐘就會開始扭。用遊戲包起來，效果是三倍以上。三個遊戲各練不同的東西，輪著玩。</p>
+
+<h3>遊戲一：鍵盤尋寶（練鍵位，最有效）</h3>
+<div class="box o">
+<p><span class="tag">練什麼</span>符號在鍵盤哪裡，也就是第 1、2 關的核心。</p>
+<p class="bold">規則：</p>
+<ol>
+  <li>家長唸一個音，例如「ㄇ」，孩子要在鍵盤（或平板注音鍵盤）上按出來。</li>
+  <li>按對得 1 分。用計時器，30 秒內看能拿幾分。</li>
+  <li>進階版：唸「ㄇㄚ」，要按兩個鍵；再進階：唸「ㄇㄚˇ」，要含聲調。</li>
+  <li>反過來玩：家長<span class="bold">按鍵不出聲</span>，孩子看螢幕上的注音，唸出來。這練的是「看到符號就認得」。</li>
+</ol>
+<p class="bold">怎麼結合注音打字：</p>
+<p>在 LINE 的訊息框、或備忘錄裡玩都可以。重點是<span class="bold">讓他在真正會打字的地方玩</span>，不要另外開一個練習軟體——孩子會把練習軟體當成「另一個上課」，但在 LINE 裡玩，他會覺得這是要傳訊息。</p>
+<p class="small">變化玩法：一次唸五個音，孩子要照順序打完再送出，家長看那一串注音對不對。像是「ㄨㄛˇ ㄞˋ ㄋㄧˇ」打完送出，就會變成「我愛你」——孩子會覺得這遊戲有魔法。</p>
+</div>
+
+<h3>遊戲二：一句話快遞（練真實應用，最重要）</h3>
+<div class="box g">
+<p><span class="tag g">練什麼</span>真實情境的打字，也就是我們的終極目標。</p>
+<p class="bold">規則：</p>
+<ol>
+  <li>每天固定一個時間（例如放學回家、或晚飯前），孩子要傳<span class="bold">一句話</span>給一位家人。</li>
+  <li>句子從第 3 節的範例裡挑，或他自己想。家長可以先把句子寫在紙上（國字＋注音），孩子照著打。</li>
+  <li>訊息<span class="bold">一定要真的送出</span>，而且收件人<span class="bold">一定要真的回</span>。阿嬤回一個貼圖、爸爸回「好喔」，對孩子就是完成任務的證明。</li>
+  <li>每完成一天，在紙上貼一張貼紙。集滿五張換一個小獎勵（見第 4 節）。</li>
+</ol>
+<p class="bold">怎麼結合注音打字：</p>
+<p>這遊戲的關鍵是<span class="bold">收件人要是真的在乎他的人</span>。建議第一週傳給阿公阿嬤——長輩回訊息最快、最熱情、也最不介意錯字。孩子看到阿嬤回「乖孫～」的那一刻，比任何獎狀都有用。</p>
+<p class="small">加分玩法：請收件人<span class="bold">故意用注音回</span>，讓孩子練習解碼。祖孫互相用注音傳訊，會變成一個很有趣的家庭儀式。</p>
+</div>
+
+<h3>遊戲三：注音解碼王（練聽辨與拼音，針對 ㄣㄥ、ㄓㄗ）</h3>
+<div class="box p">
+<p><span class="tag p">練什麼</span>「唸得出來」和「拼得正確」這件事。對付台灣孩子最常卡的地方。</p>
+<p class="bold">規則（兩種玩法，輪著來）：</p>
+<p class="bold">玩法 A・我唸你打：</p>
+<ul>
+  <li>家長唸一組容易混的音：「心」和「星」、「知」和「資」、「三」和「山」、「藍」和「南」。</li>
+  <li>孩子要打出正確的那一個。打對得分。</li>
+  <li>家長唸的時候<span class="bold">要誇張一點</span>，把鼻音、翹舌做出來。孩子聽得出差異，才打得出差異。</li>
+</ul>
+<p class="bold">玩法 B・你打我猜：</p>
+<ul>
+  <li>孩子打一串注音傳給家長，家長要唸出那是什麼。</li>
+  <li>例如孩子打「ㄨㄛˇ ㄒㄧㄤˇ ㄔˋ ㄐㄧㄠˇ」，家長要唸出「我想睡覺」。</li>
+  <li>猜錯的話，孩子可以嘲笑家長一次——讓他有「我比大人厲害」的感覺，他會想一直玩。</li>
+</ul>
+<p class="small">這遊戲搭公車、等餐、排隊都能玩，不用坐到桌前。家長只要出一張嘴。</p>
+</div>
+
+<!-- ============ 3 ============ -->
+<h2 id="s3">3・練習句型與短文範例</h2>
+<p>下面這些句子都用孩子真的會遇到的事：放學、肚子餓、想阿嬤、要人家陪他玩。上面是國字，下面是注音，讓孩子照著下面的注音打。</p>
+
+<div class="box b">
+<p class="bold">兩個使用原則：</p>
+<ul>
+  <li><span class="bold">先打詞，不要打單字。</span>例如要打「喜歡」，就一次打「ㄒㄧˇ ㄏㄨㄢ」兩個音再選字，輸入法會直接給「喜歡」。一個字一個字打，候選字一大堆，孩子會崩潰。</li>
+  <li><span class="bold">「一、不、七、八」這類會變調的字，打本調就好。</span>例如「不」就打 ㄅㄨˋ、「一」就打 ㄧ，輸入法都認得，不要教他變調規則，那會把孩子打昏。</li>
+</ul>
+</div>
+
+<div id="draw" class="noPrint">
+  <p class="small">點一下，隨機抽一句給孩子練習</p>
+  <div id="drawOut">—</div>
+  <div id="drawZhu" class="zh"></div>
+  <button onclick="drawSent()">抽一句</button>
+</div>
+
+<div class="lvlhead"><span class="n">1</span><span class="t">暖身：家人的稱呼與單詞</span><span class="small">（第 1、2 關用）</span></div>
+
+<div class="sent"><div class="han">媽媽</div><div class="zhu zh">ㄇㄚ ㄇㄚ˙</div></div>
+<div class="sent"><div class="han">爸爸</div><div class="zhu zh">ㄅㄚˋ ㄅㄚ˙</div></div>
+<div class="sent"><div class="han">哥哥</div><div class="zhu zh">ㄍㄜ ㄍㄜ˙</div></div>
+<div class="sent"><div class="han">妹妹</div><div class="zhu zh">ㄇㄟˋ ㄇㄟ˙</div></div>
+<div class="sent"><div class="han">阿公</div><div class="zhu zh">ㄚ ㄍㄨㄥ</div></div>
+<div class="sent"><div class="han">阿嬤</div><div class="zhu zh">ㄚ ㄇㄚˋ</div></div>
+<div class="sent"><div class="han">老師</div><div class="zhu zh">ㄌㄠˇ ㄕ</div></div>
+<div class="sent"><div class="han">我回家了</div><div class="zhu zh">ㄨㄛˇ ㄏㄨㄟˊ ㄐㄧㄚ ㄌㄜ˙</div></div>
+
+<div class="lvlhead"><span class="n">2</span><span class="t">短句：五到八個字</span><span class="small">（第 3 關用）</span></div>
+
+<div class="sent"><div class="han">我愛你</div><div class="zhu zh">ㄨㄛˇ ㄞˋ ㄋㄧˇ</div></div>
+<div class="sent"><div class="han">謝謝你</div><div class="zhu zh">ㄒㄧㄝˋ ㄒㄧㄝ˙ ㄋㄧˇ</div></div>
+<div class="sent"><div class="han">對不起</div><div class="zhu zh">ㄉㄨㄟˋ ㄅㄨˋ ㄑㄧˇ</div></div>
+<div class="sent"><div class="han">我肚子餓了</div><div class="zhu zh">ㄨㄛˇ ㄉㄨˋ ㄗ˙ ㄜˋ ㄌㄜ˙</div></div>
+<div class="sent"><div class="han">我想睡覺</div><div class="zhu zh">ㄨㄛˇ ㄒㄧㄤˇ ㄕㄨㄟˋ ㄐㄧㄠˋ</div></div>
+<div class="sent"><div class="han">我在寫功課</div><div class="zhu zh">ㄨㄛˇ ㄗㄞˋ ㄒㄧㄝˇ ㄍㄨㄥ ㄎㄜˋ</div></div>
+<div class="sent"><div class="han">今天好熱</div><div class="zhu zh">ㄐㄧㄣ ㄊㄧㄢ ㄏㄠˇ ㄖㄜˋ</div></div>
+<div class="sent"><div class="han">我考一百分</div><div class="zhu zh">ㄨㄛˇ ㄎㄠˇ ㄧ ㄅㄞˇ ㄈㄣ</div></div>
+
+<div class="lvlhead"><span class="n">3</span><span class="t">真的訊息：可以傳給家人的話</span><span class="small">（第 4、5 關用）</span></div>
+
+<div class="sent"><div class="han">阿嬤，我放學了，六點到家。</div><div class="zhu zh">ㄚ ㄇㄚˋ ㄨㄛˇ ㄈㄤˋ ㄒㄩㄝˊ ㄌㄜ˙ ㄌㄧㄡˋ ㄉㄧㄢˇ ㄉㄠˋ ㄐㄧㄚ</div></div>
+<div class="sent"><div class="han">媽媽，功課寫完了，可以看電視嗎？</div><div class="zhu zh">ㄇㄚ ㄇㄚ˙ ㄍㄨㄥ ㄎㄜˋ ㄒㄧㄝˇ ㄨㄢˊ ㄌㄜ˙ ㄎㄜˇ ㄧˇ ㄎㄢˋ ㄉㄧㄢˋ ㄕˋ ㄇㄚ˙</div></div>
+<div class="sent"><div class="han">爸爸，你什麼時候回來？我想你了。</div><div class="zhu zh">ㄅㄚˋ ㄅㄚ˙ ㄋㄧˇ ㄕㄣˊ ㄇㄜ˙ ㄕˊ ㄏㄡˋ ㄏㄨㄟˊ ㄌㄞˊ ㄨㄛˇ ㄒㄧㄤˇ ㄋㄧˇ ㄌㄜ˙</div></div>
+<div class="sent"><div class="han">外婆，祝你生日快樂，我愛你。</div><div class="zhu zh">ㄨㄞˋ ㄆㄛˊ ㄓㄨˋ ㄋㄧˇ ㄕㄥ ㄖˋ ㄎㄨㄞˋ ㄌㄜˋ ㄨㄛˇ ㄞˋ ㄋㄧˇ</div></div>
+<div class="sent"><div class="han">哥哥，你可以陪我玩積木嗎？</div><div class="zhu zh">ㄍㄜ ㄍㄜ˙ ㄋㄧˇ ㄎㄜˇ ㄧˇ ㄆㄟˊ ㄨㄛˇ ㄨㄢˊ ㄐㄧ ㄇㄨˋ ㄇㄚ˙</div></div>
+<div class="sent"><div class="han">我今天心情很好，因為下課可以踢球。</div><div class="zhu zh">ㄨㄛˇ ㄐㄧㄣ ㄊㄧㄢ ㄒㄧㄣ ㄑㄧㄥˊ ㄏㄣˇ ㄏㄠˇ ㄧㄣ ㄨㄟˋ ㄒㄧㄚˋ ㄎㄜˋ ㄎㄜˇ ㄧˇ ㄊㄧ ㄑㄧㄡˊ</div></div>
+<div class="sent"><div class="han">奶奶，我感冒了，今天不去你家。</div><div class="zhu zh">ㄋㄞˇ ㄋㄞ˙ ㄨㄛˇ ㄍㄢˇ ㄇㄠˋ ㄌㄜ˙ ㄐㄧㄣ ㄊㄧㄢ ㄅㄨˋ ㄑㄩˋ ㄋㄧˇ ㄐㄧㄚ</div></div>
+<div class="sent"><div class="han">我已經到家了，不用擔心。</div><div class="zhu zh">ㄨㄛˇ ㄧˇ ㄐㄧㄥ ㄉㄠˋ ㄐㄧㄚ ㄌㄜ˙ ㄅㄨˊ ㄩㄥˋ ㄉㄢ ㄒㄧㄣ</div></div>
+
+<div class="lvlhead"><span class="n">4</span><span class="t">小短文：三到五句</span><span class="small">（第 6 關用）</span></div>
+
+<div class="sent"><div class="han">阿嬤，你好嗎？我今天在學校吃滷肉飯，很好吃。下課的時候，我和同學去操場跑步。我六點就回家了，你要等我喔。</div><div class="zhu zh">ㄚ ㄇㄚˋ ㄋㄧˇ ㄏㄠˇ ㄇㄚ˙ ㄨㄛˇ ㄐㄧㄣ ㄊㄧㄢ ㄗㄞˋ ㄒㄩㄝˊ ㄒㄧㄠˋ ㄔ ㄌㄨˇ ㄖㄡˋ ㄈㄢˋ ㄏㄣˇ ㄏㄠˇ ㄔ ㄒㄧㄚˋ ㄎㄜˋ ㄉㄜ˙ ㄕˊ ㄏㄡˋ ㄨㄛˇ ㄏㄢˋ ㄊㄨㄥˊ ㄒㄩㄝˊ ㄑㄩˋ ㄘㄠ ㄔㄤˇ ㄆㄠˇ ㄅㄨˋ ㄨㄛˇ ㄌㄧㄡˋ ㄉㄧㄢˇ ㄐㄧㄡˋ ㄏㄨㄟˊ ㄐㄧㄚ ㄌㄜ˙ ㄋㄧˇ ㄧㄠˋ ㄉㄥˇ ㄨㄛˇ ㄛ˙</div></div>
+
+<div class="sent"><div class="han">爸爸，你下班了嗎？我今天數學考九十分，老師說我進步了。你可以帶我去公園騎腳踏車嗎？我會先把功課寫完。</div><div class="zhu zh">ㄅㄚˋ ㄅㄚ˙ ㄋㄧˇ ㄒㄧㄚˋ ㄅㄢ ㄌㄜ˙ ㄇㄚ˙ ㄨㄛˇ ㄐㄧㄣ ㄊㄧㄢ ㄕㄨˋ ㄒㄩㄝˊ ㄎㄠˇ ㄐㄧㄡˇ ㄕˊ ㄈㄣ ㄌㄠˇ ㄕ ㄕㄨㄛ ㄨㄛˇ ㄐㄧㄣˋ ㄅㄨˋ ㄌㄜ˙ ㄋㄧˇ ㄎㄜˇ ㄧˇ ㄉㄞˋ ㄨㄛˇ ㄑㄩˋ ㄍㄨㄥ ㄩㄢˊ ㄑㄧˊ ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ ㄇㄚ˙ ㄨㄛˇ ㄏㄨㄟˋ ㄒㄧㄢ ㄒㄧㄝˇ ㄨㄢˊ ㄍㄨㄥ ㄎㄜˋ</div></div>
+
+<div class="sent"><div class="han">給自己的備忘錄：星期六要去阿公家。要帶水壺、帽子和作業。晚上七點要洗澡，八點要睡覺。</div><div class="zhu zh">ㄒㄧㄥ ㄑㄧ ㄌㄧㄡˋ ㄧㄠˋ ㄑㄩˋ ㄚ ㄍㄨㄥ ㄐㄧㄚ ㄧㄠˋ ㄉㄞˋ ㄕㄨㄟˇ ㄏㄨˊ ㄇㄠˋ ㄗ˙ ㄏㄢˋ ㄗㄨㄛˋ ㄧㄝˋ ㄨㄢˇ ㄕㄤˋ ㄑㄧ ㄉㄧㄢˇ ㄧㄠˋ ㄒㄧˇ ㄗㄠˇ ㄅㄚ ㄉㄧㄢˇ ㄧㄠˋ ㄕㄨㄟˋ ㄐㄧㄠˋ</div></div>
+
+<div class="box o">
+<p class="bold">短文怎麼用：</p>
+<p>不要一次叫他打完一整篇。切成<span class="bold">一天一句</span>，四天打完一篇，最後一天把四句合成一則訊息傳出去。八、九歲的孩子一次處理一整段會挫折，一次一句剛剛好。</p>
+</div>
+
+<!-- ============ 4 ============ -->
+<h2 id="s4">4・家長操作建議</h2>
+
+<h3>輸入法怎麼設</h3>
+<div class="box">
+<p><span class="tag">手機・平板</span><span class="bold">先從這裡開始</span></p>
+<ul>
+  <li>iPhone／iPad：設定 → 一般 → 鍵盤 → 鍵盤 → 新增鍵盤 → 選「注音」。台灣買的機器通常內建，沒有的話加一下就有了。</li>
+  <li>Android：設定 → 系統 → 語言與輸入 → 虛擬鍵盤 → Gboard → 語言 → 加「注音」（或「繁體中文（台灣）」）。</li>
+  <li>手機和平板的注音鍵盤排法跟大千式一樣，也是照注音符號順序，而且<span class="bold">按鍵大、有注音顯示</span>，比電腦鍵盤適合入門。</li>
+  <li>建議<span class="bold">先用平板</span>：螢幕大、鍵大、不容易誤觸，孩子比較不會挫敗。</li>
+</ul>
+<p class="small">為什麼先用手機：孩子的目標是「傳 LINE」，那就在 LINE 上面練。在電腦上練完還要再適應一次手機，等於學兩遍。</p>
+</div>
+
+<div class="box">
+<p><span class="tag b">電腦</span>等孩子手機打順了再上</p>
+<ul>
+  <li>Windows：設定 → 時間與語言 → 語言與地區 → 新增「中文（繁體，台灣）」→ 選「微軟注音」。鍵盤配置要選<span class="bold">「標準」</span>，不要選倚天、許氏。</li>
+  <li>macOS：系統設定 → 鍵盤 → 輸入方式 → 加「注音」→ 鍵盤配置選<span class="bold">「標準」</span>。</li>
+  <li>電腦上沒有注音顯示，孩子一定會一直看鍵盤。買一組注音鍵盤貼紙，或用本頁的鍵盤圖列印出來貼在螢幕旁邊。</li>
+</ul>
+</div>
+
+<div class="box r">
+<p class="bold">兩個一定要先做好的設定：</p>
+<ol>
+  <li><span class="bold">切換輸入法的快捷鍵固定一種。</span>Windows 常用 Ctrl＋空白、或 Win＋空白；macOS 常用 Ctrl＋空白、或 Caps Lock。全家統一用同一種，孩子才不會混亂。</li>
+  <li><span class="bold">把「送出前再檢查一次」變成習慣。</span>教孩子在按送出之前，把自己打的那句唸一遍。這個動作比任何糾正都有效。</li>
+</ol>
+</div>
+
+<h3>多久練一次</h3>
+<div class="box g">
+<ul>
+  <li><span class="bold">每次 10 到 15 分鐘</span>。八、九歲的專注力差不多就這麼長，超過就是浪費，而且會留下「打字很討厭」的印象。</li>
+  <li><span class="bold">一週五天，固定同一個時段</span>。放學回家、晚飯前、洗澡前都可以。固定時段的重點是「不用大人催」。</li>
+  <li><span class="bold">每天練 10 分鐘，勝過週末練一小時。</span>肌肉記憶靠的是頻率，不是單次長度。這件事在打字上特別明顯。</li>
+  <li><span class="bold">不要每天都加新進度。</span>一週裡安排兩天「複習日」：只打已經會的東西，讓孩子有「我今天很厲害」的感覺。成就感要有地方放。</li>
+  <li><span class="bold">前兩週不要計時。</span>速度是正確率穩定之後自然會來的東西，早早催他快，只會養成亂按的習慣。</li>
+</ul>
+</div>
+
+<h3>怎麼給獎勵跟鼓勵</h3>
+<div class="box o">
+<p class="bold">最好用的獎勵，其實不用花錢：</p>
+<ul>
+  <li><span class="bold">家人的回訊就是最強的獎勵。</span>阿嬤回一句「乖孫，阿嬤收到了」，比十張貼紙有用。建議先跟長輩講好，請他們一定要回、而且要回得熱情。</li>
+  <li><span class="bold">把他的訊息給別人看。</span>「你看，弟弟自己打給阿嬤的喔」——讓他在家人面前被稱讚一次，他會想再打十次。</li>
+  <li><span class="bold">集點制要具體。</span>貼紙、印章、或一格一格的表格都可以，重點是<span class="bold">「完成一次貼一格」要看得見</span>。集滿五格換小東西（多講一本床邊故事、選一次晚餐菜色、多玩 15 分鐘）。</li>
+</ul>
+<p class="bold">幾個要小心的地雷：</p>
+<ul>
+  <li><span class="bold">不要糾正每一個錯字。</span>二年級只會七百個字，打錯、選錯字是正常的。一篇訊息裡挑一個最嚴重的講就好，其他放過。</li>
+  <li><span class="bold">不要用「你怎麼又打錯」這種話。</span>改成「這個字我也常常選不到」，或「我們一起找找看它在哪裡」。</li>
+  <li><span class="bold">不要跟別人比。</span>「哥哥以前比你快」這種話一講，孩子就不想打了。</li>
+  <li><span class="bold">不要用錢當獎勵。</span>一次兩次有效，久了會變成「沒錢就不打」。用小東西、小特權就好。</li>
+  <li><span class="bold">獎勵要給「過程」不是「結果」。</span>「你今天有坐下來練」該被稱讚，不是「你今天打了幾字」。</li>
+</ul>
+</div>
+
+<div class="box r">
+<p class="bold">順便提醒兩件事：</p>
+<ul>
+  <li>孩子開始會打字傳訊息之後，建議<span class="bold">跟他約定好只能傳給家人</span>，不要自己加入陌生群組、不要回應不認識的人。趁現在建立習慣，比事後禁止容易。</li>
+  <li>如果孩子用的是家裡的舊手機或平板，記得<span class="bold">確認 LINE 帳號是誰的</span>，以及能不能被加入不認識的群組。這部分各家長狀況不同，請自己確認一下。</li>
+</ul>
+</div>
+
+<!-- ============ 5 ============ -->
+<h2 id="s5">5・常見困難與應對</h2>
+
+<div class="box">
+<p><span class="tag r">困難一</span><span class="bold">只會注音，不會選字</span>（最常見）</p>
+<p class="small">狀況：音都打對了，但候選字跑出十幾個，他不知道哪個才是「回家」的「家」。</p>
+<p class="bold">怎麼辦：</p>
+<ol>
+  <li><span class="bold">打詞，不要打單字。</span>這是最有效的一招。要打「回家」，就一次打「ㄏㄨㄟˊ ㄐㄧㄚ」再選，輸入法會直接給你「回家」。要打「喜歡」就打「ㄒㄧˇ ㄏㄨㄢ」。一個字一個字打，同音字一堆；兩個字一起打，幾乎不會選錯。</li>
+  <li><span class="bold">打不出來的字就先換句話說。</span>「我今天很疲累」不會寫，就改打「我今天很累」。這不是偷懶，是溝通能力。</li>
+  <li><span class="bold">暫時接受注音文。</span>孩子傳「ㄨㄛˇ ㄞˋ ㄋㄧˇ」給阿嬤，阿嬤看得懂，那就成功了。<span class="bold">先讓他敢打，再要求字正確。</span>這一步很多人急著跳過，結果孩子兩個月就放棄了。</li>
+  <li><span class="bold">選字時讓他唸出來。</span>「家在哪裡？我們找找看。」陪他一起找，幾次之後他會記得位置。</li>
+</ol>
+</div>
+
+<div class="box">
+<p><span class="tag r">困難二</span><span class="bold">速度很慢，打一句要五分鐘</span></p>
+<p class="small">狀況：一個鍵一個鍵找，打完一句課文的時間比手寫還久。</p>
+<p class="bold">怎麼辦：</p>
+<ul>
+  <li><span class="bold">前三週不要看時間。</span>這不是安慰話，是策略。注音打字的速度來自「手指記住位置」，而那需要大約三到四週每天接觸才會發生。在那之前催速度，只會讓他亂按。</li>
+  <li><span class="bold">用遊戲一（鍵盤尋寶）單練找鍵。</span>把「找鍵」和「組句子」拆開練，各自都會進步。</li>
+  <li><span class="bold">記住一個基準：</span>剛開始一分鐘打 5 到 10 個字是正常的，兩個月後到 15 到 20 字就很不錯了。不要用大人的速度當標準。</li>
+  <li><span class="bold">句子先短。</span>從五個字開始，能穩定打完五個字，再進到八個字、十二個字。</li>
+</ul>
+</div>
+
+<div class="box">
+<p><span class="tag r">困難三</span><span class="bold">忘記切換輸入法，打出一大串英文字母</span></p>
+<p class="small">狀況：打半天發現畫面上是「ji3 4fu1」這種東西。</p>
+<p class="bold">怎麼辦：</p>
+<ul>
+  <li><span class="bold">給一句口訣。</span>「要打注音，先叫注音出來」。讓他在按第一個鍵之前，先看一眼鍵盤上是英文字母還是注音。</li>
+  <li><span class="bold">教他看鍵盤判斷，而不是被打罵。</span>跟孩子說：「打出來是英文字母，就是注音還沒出來，按一下切換就好了。」當成一個技術問題，不是他的錯。</li>
+  <li><span class="bold">手機上可以把注音設成預設。</span>iPhone 可以在鍵盤設定裡把注音排到第一個；Android 也可以調整輸入法順序。設好之後，切換的次數會少很多。</li>
+  <li><span class="bold">前幾次家長先幫他檢查。</span>「要傳之前，先給我看一下」——講兩週他就會自己檢查了。</li>
+</ul>
+</div>
+
+<div class="box">
+<p><span class="tag r">困難四</span><span class="bold">ㄣㄥ、ㄓㄗ 分不出來</span></p>
+<p class="small">狀況：打「星星」打成「心心」，打「知道」打成「資到」。</p>
+<p class="bold">怎麼辦：</p>
+<ul>
+  <li>這是<span class="bold">聽辨問題，不是打字問題</span>。先玩遊戲三的玩法 A，練耳朵，再上鍵盤。</li>
+  <li>家長唸的時候<span class="bold">刻意誇張</span>：ㄥ 把鼻音拖長、ㄓ 把舌頭捲起來做出來。孩子聽得到差別才打得出差別。</li>
+  <li>可以對著鏡子練：讓他看自己唸「心」和「星」的時候嘴巴有哪裡不一樣。</li>
+  <li>南部家庭不用太焦慮，這組音在台灣本來就普遍混淆，大人也常分不清。慢慢練就好，<span class="bold">不要一直糾正到孩子不敢講話</span>。</li>
+</ul>
+</div>
+
+<div class="box">
+<p><span class="tag r">困難五</span><span class="bold">一直盯著鍵盤，抬不起頭</span></p>
+<p class="small">狀況：眼睛在鍵盤和螢幕之間來回，打得很慢，脖子很痠。</p>
+<p class="bold">怎麼辦：</p>
+<ul>
+  <li><span class="bold">這在初期是正常的，不用急著改。</span>先讓他「能夠打出來」，再求「不看鍵盤」。</li>
+  <li><span class="bold">用手掌蓋住鍵盤玩尋寶。</span>家長唸音，孩子在鍵盤被蓋住（或用紙遮住）的狀況下按，看他對不對。一次五個音就好。</li>
+  <li><span class="bold">記住大千式的規律：</span>「聲母在左邊、韻母在右邊、聲調在最上面」。有這個大方向，就不用一個一個找。</li>
+  <li>手指位置建議：左手放在 A S D F（ㄇ ㄋ ㄎ ㄑ），右手放在 J K L ;（ㄨ ㄜ ㄠ ㄤ）。每次打完一個字，手指回到原位。</li>
+</ul>
+</div>
+
+<div class="box">
+<p><span class="tag r">困難六</span><span class="bold">打到一半耍賴、說不想練了</span></p>
+<p class="small">狀況：這大概是所有困難裡最常發生的。</p>
+<p class="bold">怎麼辦：</p>
+<ul>
+  <li><span class="bold">先縮短，不要勸說。</span>「那我們今天打三個字就好」。他打了三個字，通常就會想打第四個。</li>
+  <li><span class="bold">換人。</span>今天改成孩子唸、家長打。讓他當老師，他會很有精神。</li>
+  <li><span class="bold">換內容。</span>讓他打自己想打的東西：卡通角色的名字、他最愛的零食、他想跟爸爸要的東西。有兴趣的字，打起來完全不一樣。</li>
+  <li><span class="bold">當天就停。</span>真的不想練就停，不要硬撐。硬撐一次留下的反感，要三次好玩的經驗才補得回來。</li>
+</ul>
+</div>
+
+<div class="box g">
+<p class="bold">最後給家長一句話：</p>
+<p>這套東西的目的，<span class="bold">不是要孩子打字快，是要他有一種新的方式可以說話給在乎的人聽</span>。他第一次自己打「阿嬤我愛你」傳出去，阿嬤回一個愛心的時候，你就知道這件事成了。後面的速度、正確率，都是時間問題。</p>
+</div>
+
+<hr class="hr">
+<p class="foot">
+本頁的注音標注以台灣國語常用讀法為準，各家習慣唸法不同時（例如「阿嬤」），以孩子家裡的說法與學校課本為主。<br>
+課綱部分依據教育部《十二年國民基本教育課程綱要・語文領域－國語文》：注音符號於國小一年級上學期前 10 週集中教學，第一學習階段（一、二年級）結束前達成熟練應用；學習內容 Aa-I-1 至 Aa-I-5、學習表現 3-I-1 至 3-I-4。<br>
+鍵盤排列為大千式（Windows 稱標準式），為 Windows、macOS、iOS、Android 內建注音輸入法的預設排列。
+</p>
+
+</div>
+
+<script>
+var POOL = [];
+function buildPool(){
+  POOL = [];
+  var cards = document.querySelectorAll('.sent');
+  for (var i=0;i<cards.length;i++){
+    var h = cards[i].querySelector('.han');
+    var z = cards[i].querySelector('.zhu');
+    if (h && z) POOL.push([h.textContent, z.textContent]);
+  }
+}
+function drawSent(){
+  if (!POOL.length) buildPool();
+  if (!POOL.length) return;
+  var i = Math.floor(Math.random()*POOL.length);
+  var out = document.getElementById('drawOut');
+  var zhu = document.getElementById('drawZhu');
+  out.textContent = POOL[i][0];
+  zhu.textContent = POOL[i][1];
+  out.classList.remove('pop');
+  void out.offsetWidth;
+  out.classList.add('pop');
+}
+buildPool();
+</script>
+</body>
+</html>
