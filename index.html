@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>注音打字冒險</title>
+<style>
+:root{
+  --bg:#FFF6E9; --card:#FFFFFF; --ink:#4A3F35; --ink2:#A99684;
+  --orange:#F08A3C; --orange2:#FFB067; --orange-l:#FFF0DC;
+  --green:#4FA96B; --green-l:#E6F5EA;
+  --blue:#4A90C2; --blue-l:#E7F1F9;
+  --red:#D96B6B;
+  --line:#EBDCC6;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
+body{
+  margin:0; padding:10px 10px 30px; background:var(--bg); color:var(--ink);
+  font-family:"PingFang TC","Hiragino Sans GB","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px; line-height:1.6;
+  -webkit-user-select:none; user-select:none;
+}
+.wrap{max-width:900px; margin:0 auto;}
+
+/* 頂列 */
+.top{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.title{font-size:20px; font-weight:600; flex:1 1 auto;}
+.iconbtn{
+  border:none; background:var(--card); border-radius:12px; min-width:48px; height:48px;
+  font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 0 rgba(0,0,0,.06);
+}
+.iconbtn:active{transform:translateY(2px); box-shadow:none;}
+.iconbtn.on{background:var(--orange); }
+.iconbtn.sm{font-size:15px; font-weight:600; padding:0 10px; min-width:auto;}
+
+/* 關卡條 */
+.lvbar{display:flex; gap:6px; justify-content:center; margin-bottom:12px; flex-wrap:wrap;}
+.lvdot{
+  width:38px; height:38px; border-radius:50%; background:#fff; border:2px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600;
+  color:var(--ink2); cursor:pointer;
+}
+.lvdot.done{background:var(--green-l); border-color:var(--green); color:var(--green);}
+.lvdot.cur{border-color:var(--orange); background:var(--orange); color:#fff;}
+
+/* 對話 */
+.chat{background:var(--card); border-radius:18px; padding:14px; margin-bottom:10px;}
+.who{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.face{
+  width:54px; height:54px; border-radius:50%; background:var(--orange-l);
+  display:flex; align-items:center; justify-content:center; font-size:32px; flex:none;
+}
+.whoname{font-size:17px; font-weight:600;}
+.whosub{font-size:13px; color:var(--ink2);}
+
+.bubble{
+  background:var(--orange-l); border-radius:16px; padding:14px 12px; min-height:96px;
+  display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start;
+}
+.bubble.sent{background:var(--green-l);}
+.slots{display:flex; flex-wrap:wrap; gap:8px; width:100%;}
+.slot{
+  min-width:62px; padding:6px 4px; border-radius:12px; background:#fff;
+  border:2px dashed var(--line); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; min-height:78px;
+}
+.slot .h{font-size:34px; line-height:1.15; font-weight:600;}
+.slot .z{font-size:15px; color:var(--ink2); letter-spacing:1px; line-height:1.3;}
+.slot.todo{background:var(--orange); border-style:solid; border-color:var(--orange);}
+.slot.todo .h{color:#fff;}
+.slot.todo .z{color:#FFE9CE;}
+.slot.done{background:#fff; border-style:solid; border-color:var(--green);}
+.slot.hide .h,.slot.hide .z{visibility:hidden;}
+.nozy .z{display:none;}
+
+.reply{
+  display:none; margin-top:10px; background:var(--card); border:2px solid var(--green);
+  border-radius:14px; padding:12px 14px; font-size:19px; font-weight:600; color:var(--green);
+}
+.reply.show{display:block;}
+
+/* 狀態列 */
+.status{
+  display:flex; align-items:center; gap:10px; justify-content:center;
+  font-size:16px; color:var(--ink2); margin:8px 0; min-height:28px;
+}
+.stars{font-size:22px; letter-spacing:3px;}
+
+/* 鍵盤 */
+.kb{background:var(--card); border-radius:16px; padding:10px 8px; margin-top:10px;}
+.kbrow{display:flex; gap:5px; margin-bottom:5px;}
+.key{
+  flex:1 1 0; min-width:0; height:58px; border-radius:10px; background:#fff;
+  border:2px solid var(--line); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; cursor:pointer; padding:2px;
+}
+.key .z{font-size:20px; font-weight:600; line-height:1.1;}
+.key .e{font-size:10px; color:var(--ink2); line-height:1.2;}
+.key.tone{background:var(--orange-l); border-color:var(--orange2);}
+.key.tone .z{color:#D2691E;}
+.key.space{flex:1 1 0; height:54px; background:var(--blue-l); border-color:#BBD7EA;}
+.key.space .z{font-size:14px; color:var(--blue); font-weight:600;}
+.key:active{transform:translateY(2px); background:var(--orange-l);}
+.key.hint{animation:blink .6s infinite; background:var(--orange); border-color:var(--orange);}
+.key.hint .z,.key.hint .e{color:#fff;}
+.key.wrong{animation:shake .4s; background:#FBE0E0; border-color:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.pop{animation:popin .35s;}
+@keyframes popin{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* 大鈕 */
+.bigbtn{
+  width:100%; border:none; border-radius:14px; padding:16px; font-size:19px; font-weight:600;
+  background:var(--green); color:#fff; cursor:pointer; margin-top:10px; font-family:inherit;
+}
+.bigbtn:active{transform:translateY(2px);}
+.bigbtn.gray{background:#E8DCC9; color:var(--ink);}
+
+/* 結尾與家長區 */
+.finish{display:none; text-align:center; padding:16px;}
+.finish.show{display:block;}
+.finish .big{font-size:26px; font-weight:600; margin-bottom:6px;}
+.parentbox{
+  margin-top:24px; background:#FDF8F0; border:2px dashed var(--line);
+  border-radius:16px; padding:14px 16px; font-size:14.5px; line-height:1.9; color:#6B5B4B;
+}
+.parentbox h3{margin:0 0 8px; font-size:16px;}
+.parentbox ul{margin:0; padding-left:20px;}
+.parentbox li{margin-bottom:5px;}
+.realwrap{margin-top:8px;}
+.realwrap input{
+  width:100%; font-family:inherit; font-size:18px; padding:12px; border-radius:12px;
+  border:2px solid var(--line); background:#fff; color:var(--ink); -webkit-user-select:text; user-select:text;
+}
+.hintline{font-size:14px; color:var(--ink2); text-align:center; margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="title">注音打字冒險</div>
+    <button class="iconbtn" id="btnSay" title="唸一次">🔊</button>
+    <button class="iconbtn sm on" id="btnZy" title="注音開關">ㄅㄆㄇ</button>
+    <button class="iconbtn" id="btnHint" title="給提示">💡</button>
+    <button class="iconbtn" id="btnReset" title="重新開始">↺</button>
+  </div>
+
+  <div class="lvbar" id="lvbar"></div>
+
+  <div class="chat">
+    <div class="who">
+      <div class="face" id="face">👵</div>
+      <div>
+        <div class="whoname" id="whoname">阿嬤</div>
+        <div class="whosub" id="whosub">打出這句話，傳給阿嬤</div>
+      </div>
+    </div>
+    <div class="bubble" id="bubble"><div class="slots" id="slots"></div></div>
+    <div class="reply" id="reply"></div>
+  </div>
+
+  <div class="status">
+    <span id="statText">按下面的注音鍵盤，把字打出來</span>
+    <span class="stars" id="stars"></span>
+  </div>
+
+  <div class="kb" id="kb"></div>
+
+  <button class="bigbtn" id="btnNext" style="display:none">下一關 →</button>
+
+  <div class="finish" id="finish">
+    <div class="big">🎉 全部傳出去了！</div>
+    <div>你已經會用注音打字了，<br>現在可以真的開 LINE 傳給阿嬤了。</div>
+  </div>
+
+  <div class="parentbox">
+    <h3>給爸爸媽媽（小孩不用看這邊）</h3>
+    <ul>
+      <li>這是<strong>練「注音符號在哪個鍵」</strong>的遊戲。鍵盤排列是台灣標準的大千式，跟 iPhone、iPad、Android、Windows、Mac 內建的注音鍵盤<strong>位置完全一樣</strong>。</li>
+      <li>遊戲裡不用選字：打對注音，字就自己跑出來。這是故意的——二年級只會用七百個字左右，卡在選字會放棄。等他鍵位熟了，再練真的選字。</li>
+      <li><strong>一聲要按空白鍵。</strong>這是最容易忘的一步，孩子卡住時提醒他。</li>
+      <li>建議每天 10～15 分鐘、一週五天，勝過週末練一小時。前三週<strong>不要計時</strong>。</li>
+      <li>玩完 10 關之後，最重要的一步是：<strong>真的開 LINE 傳一句給阿嬤</strong>，而且請阿嬤一定要回。那個回覆比任何獎勵都有用。</li>
+      <li>下面這格可以讓他用 iPad 真正的注音鍵盤練習，大人陪著看就好：</li>
+    </ul>
+    <div class="realwrap">
+      <input type="text" id="realInput" placeholder="這裡用 iPad 自己的注音鍵盤打打看">
+      <div class="hintline" id="realHint"></div>
+    </div>
+    <div style="margin-top:10px">
+      完整的家長手冊（輸入法設定、練習頻率、獎勵怎麼給、常見困難怎麼處理）：
+      <a href="parents.html" style="color:#4A90C2">點這裡看 parents.html</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------- 鍵盤資料（大千式／標準注音鍵盤） ---------- */
+const KB_ROWS = [
+ [['ㄅ','1'],['ㄉ','2'],['ˇ','3'],['ˋ','4'],['ㄓ','5'],['ˊ','6'],['˙','7'],['ㄚ','8'],['ㄞ','9'],['ㄢ','0'],['ㄦ','-']],
+ [['ㄆ','Q'],['ㄊ','W'],['ㄍ','E'],['ㄐ','R'],['ㄔ','T'],['ㄗ','Y'],['ㄧ','U'],['ㄛ','I'],['ㄟ','O'],['ㄣ','P']],
+ [['ㄇ','A'],['ㄋ','S'],['ㄎ','D'],['ㄑ','F'],['ㄕ','G'],['ㄘ','H'],['ㄨ','J'],['ㄜ','K'],['ㄠ','L'],['ㄤ',';']],
+ [['ㄈ','Z'],['ㄌ','X'],['ㄏ','C'],['ㄒ','V'],['ㄖ','B'],['ㄙ','N'],['ㄩ','M'],['ㄝ',','],['ㄡ','.'],['ㄥ','/']],
+];
+const Z2K = {};
+KB_ROWS.forEach(r => r.forEach(([z,k]) => Z2K[z] = k));
+
+/* ---------- 關卡：都是傳給家人的話 ---------- */
+const LEVELS = [
+  {who:'阿嬤', face:'👵', han:'阿嬤',              zhu:'ㄚ ㄇㄚˋ',                                  reply:'乖孫！阿嬤收到了 ❤️'},
+  {who:'阿嬤', face:'👵', han:'我愛你',            zhu:'ㄨㄛˇ ㄞˋ ㄋㄧˇ',                           reply:'阿嬤也愛你 ❤️'},
+  {who:'媽媽', face:'👩', han:'我回家了',          zhu:'ㄨㄛˇ ㄏㄨㄟˊ ㄐㄧㄚ ㄌㄜ˙',                 reply:'好，晚餐快好了喔'},
+  {who:'老師', face:'👩‍🏫', han:'謝謝你',         zhu:'ㄒㄧㄝˋ ㄒㄧㄝ˙ ㄋㄧˇ',                     reply:'不客氣，你好棒 👍'},
+  {who:'爸爸', face:'👨', han:'我想你了',          zhu:'ㄨㄛˇ ㄒㄧㄤˇ ㄋㄧˇ ㄌㄜ˙',                 reply:'爸爸也想你 😊'},
+  {who:'媽媽', face:'👩', han:'我肚子餓了',        zhu:'ㄨㄛˇ ㄉㄨˋ ㄗ˙ ㄜˋ ㄌㄜ˙',                 reply:'來吃飯了！'},
+  {who:'媽媽', face:'👩', han:'功課寫完了',        zhu:'ㄍㄨㄥ ㄎㄜˋ ㄒㄧㄝˇ ㄨㄢˊ ㄌㄜ˙',          reply:'好棒，那休息一下'},
+  {who:'阿嬤', face:'👵', han:'阿嬤我放學了',      zhu:'ㄚ ㄇㄚˋ ㄨㄛˇ ㄈㄤˋ ㄒㄩㄝˊ ㄌㄜ˙',       reply:'乖孫回來了，快去洗手'},
+  {who:'哥哥', face:'🧒', han:'可以陪我玩嗎',      zhu:'ㄎㄜˇ ㄧˇ ㄆㄟˊ ㄨㄛˇ ㄨㄢˊ ㄇㄚ˙',        reply:'好啊，等我一下'},
+  {who:'爸爸', face:'👨', han:'爸爸你什麼時候回來', zhu:'ㄅㄚˋ ㄅㄚ˙ ㄋㄧˇ ㄕㄣˊ ㄇㄜ˙ ㄕˊ ㄏㄡˋ ㄏㄨㄟˊ ㄌㄞˊ', reply:'大概七點，等我喔'},
+];
+
+/* ---------- 工具 ---------- */
+function syl2keys(s){
+  const keys = []; let hasTone = false;
+  for (const c of s){
+    if ('ˊˇˋ˙'.includes(c)) hasTone = true;
+    keys.push(Z2K[c]);
+  }
+  if (!hasTone) keys.push(' ');   // 一聲＝空白鍵
+  return keys;
+}
+function buildWords(lv){
+  const hs = lv.han.split('');
+  const zs = lv.zhu.split(' ');
+  return hs.map((h,i) => ({
+    h, parts: zs[i].split(''), keys: syl2keys(zs[i]), typed: 0, done: false
+  }));
+}
+
+/* ---------- 狀態 ---------- */
+let li = 0;            // 現在第幾關
+let words = [];
+let wi = 0, ki = 0;    // 第幾個字、這個字的第幾個鍵
+let misses = 0;
+let finished = false;
+let showZy = true;
+let stars = loadStars();
+
+function loadStars(){
+  try { return JSON.parse(localStorage.getItem('zytype-stars') || '{}'); }
+  catch(e){ return {}; }
+}
+function saveStars(){
+  try { localStorage.setItem('zytype-stars', JSON.stringify(stars)); } catch(e){}
+}
+
+/* ---------- 音效 ---------- */
+let AC = null;
+function ac(){
+  if (!AC) { try { AC = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
+  return AC;
+}
+function tone(freq, dur, type){
+  const c = ac(); if (!c) return;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.value = freq;
+  g.gain.setValueAtTime(.16, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001, c.currentTime + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const sndOK  = () => tone(880, .12, 'sine');
+const sndMiss= () => tone(200, .18, 'triangle');
+const sndWord= () => { tone(660,.1); setTimeout(()=>tone(990,.14), 90); };
+const sndWin = () => { [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.18,'sine'), i*130)); };
+
+/* ---------- 語音 ---------- */
+function speak(text){
+  try{
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-TW'; u.rate = .85;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 畫鍵盤 ---------- */
+function drawKB(){
+  const kb = document.getElementById('kb');
+  kb.innerHTML = '';
+  KB_ROWS.forEach(row => {
+    const r = document.createElement('div');
+    r.className = 'kbrow';
+    row.forEach(([z,k]) => {
+      const b = document.createElement('div');
+      b.className = 'key' + ('ˊˇˋ˙'.includes(z) ? ' tone' : '');
+      b.dataset.k = k;
+      b.innerHTML = '<span class="z">'+z+'</span><span class="e">'+k+'</span>';
+      b.addEventListener('click', () => press(k));
+      r.appendChild(b);
+    });
+    kb.appendChild(r);
+  });
+  const sr = document.createElement('div');
+  sr.className = 'kbrow';
+  const sp = document.createElement('div');
+  sp.className = 'key space';
+  sp.dataset.k = ' ';
+  sp.innerHTML = '<span class="z">空白鍵＝一聲</span>';
+  sp.addEventListener('click', () => press(' '));
+  sr.appendChild(sp);
+  kb.appendChild(sr);
+}
+
+/* ---------- 畫關卡 ---------- */
+function drawLvBar(){
+  const bar = document.getElementById('lvbar');
+  bar.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const d = document.createElement('div');
+    let cls = 'lvdot';
+    if (stars[i]) cls += ' done';
+    if (i === li) cls += ' cur';
+    d.className = cls;
+    d.textContent = stars[i] ? '★' : (i+1);
+    d.addEventListener('click', () => load(i));
+    bar.appendChild(d);
+  });
+}
+
+function render(){
+  const lv = LEVELS[li];
+  document.getElementById('face').textContent = lv.face;
+  document.getElementById('whoname').textContent = lv.who;
+  document.getElementById('whosub').textContent = finished ? '傳出去了！' : '打給' + lv.who;
+  const slots = document.getElementById('slots');
+  slots.innerHTML = '';
+  words.forEach((w, i) => {
+    const s = document.createElement('div');
+    let cls = 'slot';
+    if (w.done) cls += ' done';
+    else if (i === wi && !finished) cls += ' todo';
+    s.className = cls;
+    const shown = w.parts.slice(0, w.typed).join('');
+    const full  = w.parts.join('');
+    const isCur = (i === wi && !finished);
+    s.innerHTML =
+      '<div class="h">' + (w.done ? w.h : (isCur ? (shown || '&nbsp;') : '&nbsp;')) + '</div>' +
+      '<div class="z">' + full + '</div>';
+    if (!w.done && !isCur && !showZy) s.classList.add('hide');
+    slots.appendChild(s);
+  });
+  document.getElementById('bubble').classList.toggle('sent', finished);
+  document.getElementById('stars').textContent = '★'.repeat(stars[li]||0) + '☆'.repeat(3-(stars[li]||0));
+  const st = document.getElementById('statText');
+  if (finished) st.textContent = '傳出去了！';
+  else if (words[wi]) {
+    const w = words[wi];
+    const nxt = w.parts[w.typed];
+    st.textContent = nxt ? ('現在要按：' + nxt + (nxt === '一聲' ? '' : '')) : '';
+    if (!nxt) st.textContent = '按空白鍵（一聲）';
+  }
+  document.getElementById('btnNext').style.display = finished && li < LEVELS.length-1 ? 'block' : 'none';
+  document.getElementById('finish').classList.toggle('show', finished && li === LEVELS.length-1);
+  document.getElementById('realHint').textContent = '試著打：' + lv.han + '　（' + lv.zhu + '）';
+}
+
+function load(i){
+  li = i; wi = 0; ki = 0; misses = 0; finished = false;
+  words = buildWords(LEVELS[i]);
+  document.getElementById('reply').classList.remove('show');
+  clearHint();
+  drawLvBar(); render();
+  speak('打出「' + LEVELS[i].han + '」，傳給' + LEVELS[i].who);
+}
+
+function clearHint(){
+  document.querySelectorAll('.key.hint').forEach(k => k.classList.remove('hint'));
+}
+function keyEl(k){
+  return Array.prototype.find.call(document.querySelectorAll('.key'), e => e.dataset.k === k);
+}
+
+function hint(){
+  if (finished || !words[wi]) return;
+  clearHint();
+  const target = keyEl(words[wi].keys[ki]);
+  if (target){
+    target.classList.add('hint');
+    setTimeout(() => target.classList.remove('hint'), 2600);
+  }
+}
+
+function press(k){
+  if (finished || !words[wi]) return;
+  const w = words[wi];
+  if (k === w.keys[ki]){
+    clearHint();
+    ki++;
+    if (ki >= w.keys.length){
+      w.done = true; w.typed = w.parts.length;
+      wi++; ki = 0; sndWord();
+      if (wi >= words.length) win();
+    } else {
+      sndOK();
+      w.typed = countTyped(w, ki);
+    }
+    render();
+    const s = document.querySelectorAll('.slot')[wi < words.length ? wi : wi-1];
+    if (s){ s.classList.add('pop'); setTimeout(()=>s.classList.remove('pop'), 380); }
+  } else {
+    misses++; sndMiss();
+    const el = keyEl(k);
+    if (el){ el.classList.add('wrong'); setTimeout(()=>el.classList.remove('wrong'), 420); }
+    if (misses >= 3) hint();
+  }
+}
+
+function countTyped(w, ki){
+  // 已經按對 ki 個鍵，其中有幾個是注音符號（不含聲調與空白）
+  let n = 0;
+  for (let i = 0; i < ki; i++){
+    const k = w.keys[i];
+    if (k !== ' ' && !'3467'.includes(k)) n++;
+  }
+  return n;
+}
+
+function win(){
+  finished = true;
+  const s = misses === 0 ? 3 : (misses <= 3 ? 2 : 1);
+  if (!stars[li] || stars[li] < s){ stars[li] = s; saveStars(); }
+  const lv = LEVELS[li];
+  const r = document.getElementById('reply');
+  r.textContent = lv.face + ' ' + lv.reply;
+  r.classList.add('show');
+  sndWin();
+  setTimeout(() => speak(lv.reply), 500);
+  drawLvBar(); render();
+}
+
+/* ---------- 綁定 ---------- */
+document.getElementById('btnSay').addEventListener('click', () => {
+  const lv = LEVELS[li];
+  if (finished) speak(lv.reply);
+  else speak(LEVELS[li].han);
+});
+document.getElementById('btnZy').addEventListener('click', (e) => {
+  showZy = !showZy;
+  e.currentTarget.classList.toggle('on', showZy);
+  document.getElementById('slots').classList.toggle('nozy', !showZy);
+  render();
+});
+document.getElementById('btnHint').addEventListener('click', hint);
+document.getElementById('btnReset').addEventListener('click', () => load(li));
+document.getElementById('btnNext').addEventListener('click', () => {
+  if (li < LEVELS.length-1) load(li+1);
+});
+document.getElementById('realInput').addEventListener('focus', () => {
+  document.getElementById('realHint').textContent = '用 iPad 的注音鍵盤打：' + LEVELS[li].han + '　（' + LEVELS[li].zhu + '）';
+});
+
+drawKB();
+load(0);
+</script>
+</body>
+</html>
